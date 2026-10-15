@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, firefox } from "@playwright/test";
 import { request } from "node:http";
 let id;
 test.skip("GetAllUsers", async ({ request }) => {
@@ -206,4 +206,76 @@ console.log(usingToken);
   const newToken=await response.json()
   console.log(newToken);
   console.log(await response.status());
+})
+
+test('Get the user',async({request})=>{
+
+  const response=await request.get('https://reqres.in/api/users')
+
+  console.log(response.status())
+  const body=await response.json()
+  expect(await response.statusText()).toBe('OK')
+  console.log(body)
+
+})
+
+test('PostMethod',async({request})=>{
+  const response=await request.post('https://reqres.in/api/users',
+    {
+      headers:{
+         "Content-Type": "application/json",
+      }, 
+      data:{
+        first_Name: 'Purushoth',
+        last_Name:'Bruce'
+      }
+  })
+  const body=await response.json()
+  console.log(body)
+  console.log(response.statusText())
+  expect(response.statusText()).toBe('Created')
+  console.log(response.status())
+  id=body.id
+  console.log(id)
+})
+
+test('PutMethod',async({request})=>{
+   const response= await request.put(`https://reqres.in/api/users/${id}`,
+      {
+        headers:{"Content-Type": "application/json"},
+        data:{
+          first_Name:"Purushothaman R",
+          last_Name:"Purushoth"
+        }
+      }
+    )
+const body=await response.json()
+console.log(response.statusText())
+console.log(response.status())
+console.log(body)
+
+})
+
+test("PatchMethod",async({request})=>{
+
+ const response= await request.patch(`https://reqres.in/api/users/${id}`,
+    {
+      headers:{"Content-Type":"application/api"},
+      data:{
+        job:"Automation Tester"
+      }
+    }
+  )
+   const body=await response.json()
+   console.log(response.status())
+   expect(response.statusText()).toBe("OK")
+   console.log(body)
+})
+
+test('DeleteMethod',async({request})=>{
+
+  const response=await request.delete(`https://reqres.in/api/users/${id}`)
+
+  console.log(response.status())
+  console.log(response.statusText())
 })

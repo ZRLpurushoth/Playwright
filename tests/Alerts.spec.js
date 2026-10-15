@@ -1,6 +1,8 @@
-import{expect, test} from "@playwright/test"
+import{expect, test,chromium} from "@playwright/test"
 import { on } from "node:cluster"
+import { dir } from "node:console"
 import { type } from "node:os"
+import path from "node:path"
 
 test("AlertMethod",async({page},{confirm},{prompt})=>{
 
@@ -30,6 +32,34 @@ test("AlertMethod",async({page},{confirm},{prompt})=>{
     const text=await page.locator('[onclick="myFunctionPrompt()"]').textContent()
     console.log(text);
     
+    await page.waitForTimeout(3000)
+})
+
+
+test.only("alerts",async({page})=>{
+    await page.goto('https://testautomationpractice.blogspot.com/')
+
+    await page.on("dialog",async dialog =>{
+        const msg=await dialog.message()
+        const type=await dialog.type()
+        console.log(msg,type)
+
+    if(type=="alert"){
+        dialog.accept()
+    }else if(type=="confirm"){
+        dialog.accept()
+    }else if(type=="prompt"){
+        dialog.accept('Purushoth')
+    }
+
+
+    })
+
+   
+    await page.locator('//button[text()="Prompt Alert"]').click()
+    const text=await page.locator('//button[text()="Prompt Alert"]').textContent()
+    await page.screenshot({path:'tests/ScreecShots/Prompt.png',fullPage:true})
+    console.log(text)
     await page.waitForTimeout(3000)
 })
    
